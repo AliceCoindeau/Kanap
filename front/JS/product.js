@@ -67,6 +67,7 @@ toCartBtn.addEventListener("click",() => {
     // il faut selectionner une couleur
     color: document.getElementById("colors").value,
   };
+  // on definit les quantités min et max
   console.log(selected);
   // on vérifie le localsotage
   let localStorageProducts = JSON.parse(localStorage.getItem("products"));
@@ -77,10 +78,15 @@ toCartBtn.addEventListener("click",() => {
   let position = 0;
   //si le panier contient une quantité = 0 ou aucune couleur
   //alors message d'alerte
-  if (selected.quantity === 0 || selected.color === "") {
-    alert("veuillez selectionner la couleur et/ou la quantité");
+  if (selected.quantity === 0 || quantity.value > 100 ) {
+      alert("veuillez selectionner une quantité entre 1 et 100");
     return;
   }
+  if (selected.color === "") {
+    alert("veuillez selectionner une couleur ");
+    return;
+  }
+ 
   // si non
   else {
     alert(

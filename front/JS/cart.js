@@ -1,8 +1,8 @@
 //on defit le point de depart du panier
 let totalPanier = 0;
 // on verifie que le panier existe bien
-let localStorageProducts = JSON.parse(localStorage.getItem("products"));
-console.log(localStorageProducts, "Local");
+const localStorageProducts = JSON.parse(localStorage.getItem("products"));
+
 // on va chercher les produits presents dans le pannier
 for (let product of localStorageProducts) {
   //on recuperer le reste des info necessaire a la construction de notre panier
@@ -15,6 +15,7 @@ for (let product of localStorageProducts) {
         // on créer le panier
         return res.json();
       }
+      
     })
     // les élements du panier seront appelés item
     .then(function (item) {
@@ -25,6 +26,7 @@ for (let product of localStorageProducts) {
     .catch((err) => {
       document.querySelector(".titles").innerHTML = "<h1>erreur 404</h1>";
       console.log("erreur 404, sur ressource api:" + err);
+    
     });
   // on crée la fonction d'affichage du panier
   function afficherProductPanier(item) {
@@ -110,9 +112,9 @@ for (let product of localStorageProducts) {
     quantityInput.classList.add("itemQuantity");
     quantityInput.name = "itemQuantity";
     // quantité minium de produit à selectionner pour crée le panier
-    quantityInput.min = 1;
+    quantityInput.min = "1";
     // quantité maximum de produits que peut contenir le panier
-    quantityInput.max = 100;
+    quantityInput.max = "100";
     quantityInput.setAttribute("value", product.quantity);
     // on rattache l'input à articleSettingsQuantity
     articleSettingsQuantity.append(quantityInput);
@@ -144,6 +146,7 @@ for (let product of localStorageProducts) {
       for (let i = 0; i < localStorageProducts.length; i++) {
         // si l'id et la couleur du produit sont identiques à
         // ceux d'un produit deja dans le localstorage
+
         if (
           product.productId === localStorageProducts[i].productId &&
           product.color === localStorageProducts[i].color
@@ -187,7 +190,7 @@ for (let product of localStorageProducts) {
     deleteBtn.addEventListener("click", () => {
       // pour  chaque produit J du tableau localStorageProducts
       for (let j = 0; j < localStorageProducts.length; j++) {
-        // si l'id et lacouleur du produit sont identiques à
+        // si l'id et la couleur du produit sont identiques à
         // ceux d'un produit dans le localstorge
         if (
           product.productId === localStorageProducts[j].productId &&
@@ -214,7 +217,9 @@ for (let product of localStorageProducts) {
     document.getElementById("totalPrice").innerHTML = totalPanier;
   }
   //////////on crèe les conditions de validation de la commande///////////
-
+  // le panier
+  // je récupère le formulaire
+  let finPanier = document.querySelector(".cartAndFormContainer");
   //je déclare contact le formulaire que je vais le remplir au fur et à mesure de la validation
   let contact = {
     firstName: "",
@@ -257,12 +262,13 @@ for (let product of localStorageProducts) {
   // si la condition est remplie
   firstName.addEventListener("input", function (e) {
     //arrête d'écouter après le résultat valide
-    e.preventDefault();
+    validFirstName(e.target.value);
     //récupération des valeurs pour construire l'objet contact
     contact.firstName = e.target.value;
     console.log(contact, "test confirst");
   });
-// si la condition n'est pas remplie
+
+  // si la condition n'est pas remplie
   function validFirstName(firstName) {
     //on déclare la validation sur faux
     let valid = false;
@@ -284,10 +290,9 @@ for (let product of localStorageProducts) {
 
   /////////lastName/////////
   lastName.addEventListener("input", function (e) {
-    e.preventDefault();
+    validLastName(e.target.value);
     contact.lastName = e.target.value;
   });
-
   function validLastName(lastName) {
     let valid = false;
     let testLastName = lastNameRegex.test(lastName);
@@ -362,13 +367,14 @@ for (let product of localStorageProducts) {
     return valid;
   }
   // les conditions pour valider la commande
-  // on crée le nuéro de la commande
+  // on crée le numéro de la commande
   let idproducts = [];
   //on ecoute le bouton de validation de commande orderButton
-  let orderButton = document .querySelector("#order")
-    .addEventListener("click", (e) => {
+  let orderButton = document.querySelector("#order");
+    orderButton.addEventListener("click", (e) => {
       e.preventDefault();
-      // si l'un des champs du formulaire n'est pas correctement rempli 
+    
+      // si l'un des champs du formulaire n'est pas correctement rempli
       if (
         firstNameRegex.test(firstName.value) == false ||
         lastNameRegex.test(lastName.value) == false ||
@@ -382,7 +388,7 @@ for (let product of localStorageProducts) {
         );
       }
       //si l'un des champs du formulaire est  vide
-       else if (
+      else if (
         firstName.value === "" ||
         lastName.value === "" ||
         address.value === "" ||
@@ -394,8 +400,8 @@ for (let product of localStorageProducts) {
           "Vous devez renseigner vos coordonnées pour valider votre commande !"
         );
       }
-      // si tous les champs du formulaire sont correctement remplis
-       else {
+       // si tous les champs du formulaire sont correctement remplis
+      else {
         //on crée le contact client dans LS
         localStorage.setItem("contact", JSON.stringify(contact));
 
@@ -412,10 +418,10 @@ for (let product of localStorageProducts) {
 
         // fetch avec POST transforme JSON grace aux headers informations et crée la nouvelle commande
         //méthode http body = données que l'on souhaite envoyer
-// on récupère la commande dans l'API
+        // on récupère la commande dans l'API
         fetch("http://localhost:3000/api/products/order", {
           // on indique qu'il faut en créer un nouvelle
-        method: "POST",
+          method: "POST",
           body: JSON.stringify(order),
           headers: {
             "Content-Type": "application/json",
